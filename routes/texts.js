@@ -9,21 +9,33 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const text = await Texts.find({ _id: req.params.id });
-  res.send(text);
+  try {
+    const text = await Texts.find({ _id: req.params.id });
+    res.send(text);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 router.put("/:id", async (req, res) => {
-  const result = await Texts.findByIdAndUpdate(
-    { _id: req.params.id },
-    { text: req.body.text }
-  );
-  res.send(result);
+  try {
+    const result = await Texts.findByIdAndUpdate(
+      { _id: req.params.id },
+      { text: req.body.text }
+    );
+    res.send(result);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 router.delete("/:id", async (req, res) => {
-  const result = await Texts.deleteOne({ _id: req.params.id });
-  res.send(result);
+  try {
+    const result = await Texts.deleteOne({ _id: req.params.id });
+    res.send(result);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 router.post("/", async (req, res) => {
@@ -31,8 +43,12 @@ router.post("/", async (req, res) => {
     text: req.body.text,
   });
 
-  postText = await postText.save();
-  res.send(postText);
+  try {
+    postText = await postText.save();
+    res.send(postText);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 module.exports = router;
