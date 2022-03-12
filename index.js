@@ -1,10 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const texts = require("./routes/texts");
+const users = require("./routes/users");
 
 const app = express();
+
 app.use(express.json());
-app.use("/", texts);
+app.use("/texts", texts);
+app.use("/users", users);
 
 mongoose.connect(
   "mongodb://localhost/myquotes",

@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.3",
+    "lodash": "^4.17.21",
+    "lowdash": "^1.2.0",
     "mongoose": "^6.2.5"
   }
 }
