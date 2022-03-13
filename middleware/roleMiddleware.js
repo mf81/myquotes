@@ -8,9 +8,10 @@ const roleMiddleware = (role) => {
 
     try {
       req.user = jwt.verify(token, config.get("JWT"));
+
       if (req.user.role === "admin") return next();
-      if (req.user.role !== role) return res.status(401).send("Access denied");
-      next();
+      if (role.includes(req.user.role)) return next();
+      else return res.status(401).send("Access denied");
     } catch (err) {
       res.status(400).send("Invalid token");
     }

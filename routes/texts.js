@@ -19,7 +19,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", auth, role("user"), async (req, res) => {
+router.post("/", auth, role(["user", "writer"]), async (req, res) => {
+  let postText = new Texts({
+    text: req.body.text,
+  });
+
+  try {
+    postText = await postText.save();
+    res.send(postText);
+  } catch (err) {
+    res.send(err.message);
+  }
+});
+
+router.put("/:id", auth, role(["user", "writer"]), async (req, res) => {
   try {
     const result = await Texts.findByIdAndUpdate(
       { _id: req.params.id },
@@ -31,23 +44,10 @@ router.put("/:id", auth, role("user"), async (req, res) => {
   }
 });
 
-router.delete("/:id", auth, role("user"), async (req, res) => {
+router.delete("/:id", auth, role(["user"]), async (req, res) => {
   try {
     const result = await Texts.deleteOne({ _id: req.params.id });
     res.send(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-});
-
-router.post("/", auth, role("user"), async (req, res) => {
-  let postText = new Texts({
-    text: req.body.text,
-  });
-
-  try {
-    postText = await postText.save();
-    res.send(postText);
   } catch (err) {
     res.send(err.message);
   }
