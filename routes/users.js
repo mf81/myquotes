@@ -15,7 +15,7 @@ router.get("/", auth, role("admin"), async (req, res) => {
   res.send(allUsers);
 });
 
-router.get("/:id", auth, role("admin"), async (req, res) => {
+router.get("/:id", auth, role(), async (req, res) => {
   try {
     let users = await Users.find({ _id: req.params.id });
     users = _.pick(users[0], ["_id", "name", "email", "role"]);
@@ -25,7 +25,7 @@ router.get("/:id", auth, role("admin"), async (req, res) => {
   }
 });
 
-router.post("/", auth, role("admin"), async (req, res) => {
+router.post("/", auth, role(), async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashPasword = await bcrypt.hash(req.body.password, salt);
 
@@ -48,7 +48,7 @@ router.post("/", auth, role("admin"), async (req, res) => {
   }
 });
 
-router.put("/:id", auth, role("admin"), async (req, res) => {
+router.put("/:id", auth, role(), async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashPasword = await bcrypt.hash(req.body.password, salt);
@@ -69,7 +69,7 @@ router.put("/:id", auth, role("admin"), async (req, res) => {
   }
 });
 
-router.delete("/:id", auth, role("admin"), async (req, res) => {
+router.delete("/:id", auth, role(), async (req, res) => {
   try {
     const result = await Users.deleteOne({ _id: req.params.id });
     res.send(result);
