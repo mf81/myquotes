@@ -1,3 +1,5 @@
+const config = require("config");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -26,6 +28,11 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "user"],
   },
 });
+
+userSchema.methods.generateJWT = function () {
+  const token = jwt.sign({ _id: this._id, role: this.role }, config.get("JWT"));
+  return token;
+};
 
 const Users = mongoose.model("Users", userSchema);
 

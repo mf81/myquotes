@@ -1,11 +1,13 @@
+const auth = require("../middleware/authMiddleware");
+const role = require("../middleware/roleMiddleware");
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
+const mongoose = require("mongoose");
 const { Users } = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 
-router.get("/", async (req, res) => {
+router.get("/", auth, role("admin"), async (req, res) => {
   let allUsers = await Users.find();
   allUsers = _.map(allUsers, (item) =>
     _.pick(item, "_id", "name", "email", "role")
@@ -13,7 +15,7 @@ router.get("/", async (req, res) => {
   res.send(allUsers);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, role("admin"), async (req, res) => {
   try {
     let users = await Users.find({ _id: req.params.id });
     users = _.pick(users[0], ["_id", "name", "email", "role"]);
@@ -23,7 +25,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, role("admin"), async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashPasword = await bcrypt.hash(req.body.password, salt);
 
@@ -36,13 +38,17 @@ router.post("/", async (req, res) => {
 
   try {
     postUsers = await postUsers.save();
-    res.send(_.pick(postUsers, ["_id", "name", "email", "role"]));
+    //const token = jwt.sign({ _id: postUsers._id }, config.get("JWT"));
+    const token = postUsers.generateJWT();
+    res
+      .header("x-auth-token", token)
+      .send(_.pick(postUsers, ["_id", "name", "email", "role"]));
   } catch (err) {
     res.send(err.message);
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, role("admin"), async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashPasword = await bcrypt.hash(req.body.password, salt);
@@ -63,7 +69,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, role("admin"), async (req, res) => {
   try {
     const result = await Users.deleteOne({ _id: req.params.id });
     res.send(result);

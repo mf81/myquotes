@@ -1,3 +1,5 @@
+const auth = require("../middleware/authMiddleware");
+const role = require("../middleware/roleMiddleware");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
@@ -17,7 +19,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, role("user"), async (req, res) => {
   try {
     const result = await Texts.findByIdAndUpdate(
       { _id: req.params.id },
@@ -29,7 +31,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, role("user"), async (req, res) => {
   try {
     const result = await Texts.deleteOne({ _id: req.params.id });
     res.send(result);
@@ -38,7 +40,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, role("user"), async (req, res) => {
   let postText = new Texts({
     text: req.body.text,
   });
