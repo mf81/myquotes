@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const texts = require("./routes/texts");
 const users = require("./routes/users");
 const authApp = require("./utilities/auth");
+const cors = require("cors");
 
 if (!config.get("JWT")) {
   console.error("JWT not found");
@@ -11,7 +12,7 @@ if (!config.get("JWT")) {
 }
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 app.use("/texts", texts);
 app.use("/users", users);
@@ -26,7 +27,7 @@ mongoose.connect(
   }
 );
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
